@@ -14,11 +14,11 @@ mongoose.connect(url, {
 
 let connection = mongoose.connection
 connection.on('err', () => {
-    console.log('Error in Database Connection...')
+  console.log('Error in Database Connection...')
 })
 
 connection.on('connected', () => {
-    console.log('Database Connection Success...')
+  console.log('Database Connection Success...')
 })
 
 
@@ -36,30 +36,65 @@ app.use(express.json());
 //     cb(null, fileName)
 //   },
 // });
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname.toLowerCase().split(' ').join('-'));
+  },
+});
 // let upload = multer({ storage: storage });
 // var upload = multer({
 //   storage: storage,
-//   // fileFilter: (req, file, cb) => {
-//   //   if (file.mimetype == "image/png") {
-//   //     cb(null, true);
-//   //   } else {
-//   //     cb(null, false);
-//   //     return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
-//   //   }
-//   // }
-// });
-// app.post('/profile', upload.single('avatar'), function (req, res, next) {
-//     console.log(req.file);
-//     console.log(req.body);
-//     // try {
-//     //   console.log('call');
-//     //   console.log(req.file);
-//     // } catch (error) {
-//     //   console.log('error', error);
-//     // }
-//     // req.file is the `avatar` file
-//     // req.body will hold the text fields, if there were any
-// })
+//   fileFilter: (req, file, cb) => {
+//     if (file.mimetype == "image/png") {
+//       cb(null, true);
+//     } else {
+//       cb(null, false);
+//       return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+//     }
+//   }
+// }).single('avatar');
+var upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
+    }
+  },
+}).single('avatar');
+app.post('/profile', function (req, res, next) {
+  // console.log(req.file);
+  // console.log(req.body);
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      // A Multer error occurred when uploading.
+      res.status(502).json({
+        status: 0,
+        message: 'not uplad'
+      })
+    } else if (err) {
+      // An unknown error occurred when uploading.
+      res.status(502).json({
+        status: 0,
+        message: 'not uplad'
+      })
+
+    }
+
+    console.log(req.file)
+
+    // Everything went fine.
+  })
+})
 
 
 const SingleimgRouter = require('./router/single-img');
