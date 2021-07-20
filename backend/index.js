@@ -3,6 +3,10 @@ const app = express()
 const port = 3000
 var multer = require('multer')
 // var upload = multer({ dest: 'uploads/' })
+var cors = require('cors')
+
+app.use(cors())
+
 const mongoose = require('mongoose');
 const url = 'mongodb://127.0.0.1:27017/image_upload';
 mongoose.connect(url, {
@@ -27,6 +31,7 @@ app.get('/', (req, res) => {
 })
 
 app.use(express.json());
+app.use('/img', express.static('uploads'))
 // app.use(express.urlencoded({extended: false}))
 // let storage = multer.diskStorage({
 //   destination: "upload",

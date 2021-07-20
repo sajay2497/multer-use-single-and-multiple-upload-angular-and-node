@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form [formGroup]="imguploadform" (ngSubmit)="imguploadform.valid &&  onSubmit()" method="post"
+                autocomplete="off" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Single Image Upload</label>
+                    <input class="form-control" formControlName="img" type="file" (change)="onChange($event)">
+                    <!-- <small><span class="text-danger"
+                            *ngIf='submitted && imguploadform.controls["img"].touched && imguploadform.controls["img"].hasError("required")'>*Your
+                            Name is Required!!</span></small> -->
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-success">Upload </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row my-5">
+
+
+
+        <ng-container *ngIf="dataloaded;">
+            <div class="col-md-3" *ngFor="let item of numbers">
+                <ngx-skeleton-loader [theme]="{ width: '100%', 'border-radius': '0', height: '20px' }">
+                </ngx-skeleton-loader>
+            </div>
+        </ng-container>
+
+
+
+        <ng-container *ngIf="!dataloaded">
+            <div class="col-md-3 my-2 text-center" *ngFor="let item of allimg?.data">
+                <a class="btn btn-info"  routerLink="/single-img-show/{{item?.proid}}"><b>{{item?.proid}}</b></a>
+            </div>
+        </ng-container>
+
+
+    </div>
+</div>
